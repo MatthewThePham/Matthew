@@ -9,8 +9,7 @@ https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions
 
 
 # Nomitim geolocation NPM 
-* https://npm.runkit.com/nominatim/lib/nominatim.js?t=1534889519438
-* https://npm.runkit.com/nodinatim
+* https://www.npmjs.com/package/node-geocoder
 
 # overpass query NPM
 * https://npm.runkit.com/query-overpass/index.js?t=1534889488755
