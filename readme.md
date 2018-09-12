@@ -32,7 +32,8 @@ library,
 ## mapquest geolocation API Example call:
 ``` https://www.mapquestapi.com/geocoding/v1/address?key=KEY&inFormat=kvp&outFormat=json&location=Denver%2C+CO&thumbMaps=false ``` 
 
-where key=KEY will be the actual mapquest API key
+where key=KEY will be the actual mapquest API key. The output will be in a json string.
+
 
 
 ## overpass query API Example call:
@@ -40,3 +41,5 @@ where key=KEY will be the actual mapquest API key
 
 where around(around:8046.72,39.738453,-104.984853) has a parameter of 5 miles (8046.72 meters). 
 Lat will be 8046.72,39.738453 and Lng will be -104.984853
+
+The data=[out:json] will return a json string 
