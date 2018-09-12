@@ -2,10 +2,27 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
 
-### Hackaton 
-* [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
+### About project 
+Our team of 3 engineers decided on creating a skill which can help people who 
+are in rush and need the nearest location, such as a hospital, all using your voice. Simply ask for the area of interest,
+and an Alexa card will be sent onto your phone, containg the place name and address.
+
+This project was created for the [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
+and will be submitted in order to hopefully obtain the best use of category of open source data.
+
+We will try and support 
+hospital,
+shelter,
+recycling,
+police (police station),
+waste_disposal,
+bus_station,
+library,
+
+[Other placs to be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
 ### Links 
+* [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 * [console for Alexa](https://developer.amazon.com/alexa/console/ask_)
 * [AWS Lambda backend](https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions)
 * [mapquest geolocation API Doc](https://developer.mapquest.com/documentation/geocoding-api/)
