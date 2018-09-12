@@ -1,21 +1,23 @@
 const Alexa = require('ask-sdk');
 
+//used for a permissions card if the user has not enabled location permission
 const PERMISSIONS = ['read::alexa:device:all:address'];
 
+//start of the program 
 const LaunchIntentHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest'
     },
     async handle(handlerInput) {
+      //set necessary values to the handlerInput
         const { requestEnvelope, serviceClientFactory, responseBuilder } = handlerInput;
-       // const requestEnvelope = handlerInput.requestEnvelope;
 
-        var outputSpeech = ' Welcome, to Gas Me. Did you know that digestion begins in the mouth? ';
-        var repromptSpeech = ' Would you like me to gas you? ';
-
+      //generate a consent token for user permission to use their address
         const consentToken = requestEnvelope.context.System.user.permissions
           && requestEnvelope.context.System.user.permissions.consentToken;
 
+
+        //actual code for address fetching  
         if (!consentToken) {
           return responseBuilder
             .speak('Please enable Location permissions in the Amazon Alexa app.')
@@ -23,6 +25,7 @@ const LaunchIntentHandler = {
             .getResponse();
         }
         try {
+          //there is a consent token and we are fetching the user address
           const { deviceId } = requestEnvelope.context.System.device;
           const deviceAddressServiceClient = serviceClientFactory.getDeviceAddressServiceClient();
           const address = await deviceAddressServiceClient.getFullAddress(deviceId);
@@ -30,9 +33,17 @@ const LaunchIntentHandler = {
           console.log('Address successfully retrieved, now responding to user.');
     
           let response;
+
+          //if the user has not put anything in these address text field yet
           if (address.addressLine1 === null && address.city === null) {
-            response = responseBuilder.speak('It looks like you don\'t have an address set. You can set your address from the companion app.').getResponse();
-          } else {
+
+            response = responseBuilder
+              .speak('It looks like you don\'t have an address set. You can set your address from the companion app.')
+              .getResponse();
+
+          } 
+          //the user has put their address in the text field
+          else {
             const ADDRESS_MESSAGE = await Punction(address.addressLine1, address.city)
 
             response = responseBuilder
@@ -41,20 +52,20 @@ const LaunchIntentHandler = {
               .getResponse();
           }
           return response;
-        } catch (error) {
+        
+        } 
+        //there is some sort of error when fetching the address
+        catch (error) {
           if (error.name !== 'ServiceError') {
-            const response = responseBuilder.speak('Uh Oh. Looks like something went wrong.').getResponse();
-            return response;
+            const response = responseBuilder
+              .speak('Uh Oh. Looks like something went wrong.')
+              .getResponse();
+              return response;
           }
           throw error;
         }
         
-
-
-        return handlerInput.responseBuilder
-            .speak(outputSpeech + address )
-            .reprompt(repromptSpeech)
-            .getResponse();
+        
     },
 };
 
@@ -65,7 +76,6 @@ const HelpIntentHandler = {
         return request.type === 'IntentRequest' && request.intent.name === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        //const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
         var speechText = ' These are some commands in the app';
         const repromptSpeech = ' These are some commands in the app ';
@@ -132,13 +142,16 @@ const ErrorHandler = {
         console.log('Error handled:' + error) ;
 
         return handlerInput.responseBuilder
-           // .speak('Error handled: ' + error.message)
             .speak('Sorry, I can\'t understand the command. Please say again.')
             .reprompt('Sorry, I can\'t understand the command. Please say again.')
             .getResponse();
     },
 };
 
+/********** FUNCTIONS HERE **************/
+
+//This function parses out the whitespaces in the address and city, and calls the getRemoteData() function for geocoding
+// after geocoding, the lat and lng are stored as variables. These variables are passed into the 
 async function Punction(address, city)
 {
   var longitude = ''
@@ -155,21 +168,20 @@ async function Punction(address, city)
   address = address.replace(/ /g,'+')
   city = city.replace(/ /g,'+')
 
+
+  //Change this to formatted string to look like "410+Terry+Ave+North,Seattle"
   newAddress = address + ',' + city
     
-//IDEAL "http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
- //   + "2902+West+Diana+avenue,phoenix"
-
-
-    //mapquest free tier allow for 15,000 requests a month.
+  //mapquest free tier allow for 15,000 requests a month.
   mapQuestGeocode = "http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
-    + newAddress;//"2902+West+Diana+avenue,phoenix"; //Change this to formatted string
+    + newAddress; 
 
     //this geocodes the user address
     await getRemoteData(mapQuestGeocode)                                                                        //mapQuestGeoCode getting used
       .then((response) => {
         var data = JSON.parse(response);
 
+        //json data stored into lat and lng
         latitude = data.results[0].locations[0].displayLatLng.lat;
         longitude = data.results[0].locations[0].displayLatLng.lng;
         
@@ -179,7 +191,7 @@ async function Punction(address, city)
         //outputSpeech = err.message;
       })
 
-      //Overpass/openstreetmap is open source data so no limit in request.
+    //Overpass/openstreetmap is open source data so no limit in request.
      overpassString = "http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22]"
     + "(around:8046.72,"    //this is roughly 5 miles
     + latitude + ',' + longitude //this is the actual lat, lon
@@ -191,21 +203,19 @@ async function Punction(address, city)
       .then((response) => {
         var data = JSON.parse(response);
 
-        for (let i = 0; i < 6; i++) {  //gets 5 nodes
+        //gets 5 nodes and stores them into a list. Checks to make sure a name is present and not undef.
+        for (let i = 0; i < 6; i++) {  
           if(data.elements[i].tags.name != undefined ){
             listOfFuel = listOfFuel + ' , ' + data.elements[i].tags.name;
           }
         }
-       //   listOfFuel = data.elements[0].tags.name;
-
       })
       .catch((err) => {
         //set an optional error message here
         //outputSpeech = err.message;
       })
       
-
-     
+    //set data to this returned string, outputSpeech
     outputSpeech = "The latitude is " + latitude + " The longitude is " + longitude + '. The list is '
     + listOfFuel;
     
@@ -213,7 +223,8 @@ async function Punction(address, city)
 }
 
 
-//MATTHEW COMMENT refer to https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for error codess
+//This will create a proper web API call using https, checking for different protocol errors
+//For all the types of protocol errors, refer to https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 async function getRemoteData (url) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? require('https') : require('http');
