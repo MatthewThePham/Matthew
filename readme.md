@@ -19,7 +19,7 @@ waste_disposal,
 bus_station,
 library,
 
-[Other placs to be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
+[Other places that can be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
 ### Links 
 * [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
