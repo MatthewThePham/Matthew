@@ -212,6 +212,24 @@ async function Punction(address, city)
    return outputSpeech;
 }
 
+
+//MATTHEW COMMENT refer to https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for error codess
+async function getRemoteData (url) {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith('https') ? require('https') : require('http');
+    const request = client.get(url, (response) => {
+      if (response.statusCode < 200 || response.statusCode > 299) {	//this says if there a problem with the request give out error 
+        reject(new Error('Failed with status code: ' + response.statusCode));
+      }
+      const body = [];
+      response.on('data', (chunk) => body.push(chunk));
+      response.on('end', () => resolve(body.join('')));
+    });
+    request.on('error', (err) => reject(err))
+  })
+};
+
+
 const skillBuilder = Alexa.SkillBuilders.standard();
 
 exports.handler = skillBuilder
