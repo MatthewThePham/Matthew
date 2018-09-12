@@ -33,12 +33,12 @@ const LaunchIntentHandler = {
           if (address.addressLine1 === null && address.city === null) {
             response = responseBuilder.speak('It looks like you don\'t have an address set. You can set your address from the companion app.').getResponse();
           } else {
-            const ADDRESS_MESSAGE = 'Here is your full address:' + address.addressLine1 +',' + address.city
-            
+            const ADDRESS_MESSAGE = await Punction(address.addressLine1, address.city)
+
             response = responseBuilder
-            .speak(ADDRESS_MESSAGE)
-            .withStandardCard(ADDRESS_MESSAGE)
-            .getResponse();
+              .speak(ADDRESS_MESSAGE)
+              .withStandardCard(ADDRESS_MESSAGE)
+              .getResponse();
           }
           return response;
         } catch (error) {
@@ -139,7 +139,78 @@ const ErrorHandler = {
     },
 };
 
+async function Punction(address, city)
+{
+  var longitude = ''
+  var latitude = ''
+  var listOfFuel = ''
+  var newAddress = ''
+  var outputSpeech = ''
+  var newAddress = ''
 
+  var mapQuestGeocode = ''
+  var overpassString = ''
+
+    //format string algorithm
+  address = address.replace(/ /g,'+')
+  city = city.replace(/ /g,'+')
+
+  newAddress = address + ',' + city
+    
+//IDEAL "http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
+ //   + "2902+West+Diana+avenue,phoenix"
+
+
+    //mapquest free tier allow for 15,000 requests a month.
+  mapQuestGeocode = "http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
+    + newAddress;//"2902+West+Diana+avenue,phoenix"; //Change this to formatted string
+
+    //this geocodes the user address
+    await getRemoteData(mapQuestGeocode)                                                                        //mapQuestGeoCode getting used
+      .then((response) => {
+        var data = JSON.parse(response);
+
+        latitude = data.results[0].locations[0].displayLatLng.lat;
+        longitude = data.results[0].locations[0].displayLatLng.lng;
+        
+      })
+      .catch((err) => {
+        //set an optional error message here
+        //outputSpeech = err.message;
+      })
+
+      //Overpass/openstreetmap is open source data so no limit in request.
+     overpassString = "http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22]"
+    + "(around:8046.72,"    //this is roughly 5 miles
+    + latitude + ',' + longitude //this is the actual lat, lon
+    + "););out;%3E;";
+    
+
+      //this is a query to overpass api to get locations
+      await getRemoteData(overpassString)
+      .then((response) => {
+        var data = JSON.parse(response);
+
+        for (let i = 0; i < 6; i++) {  //gets 5 nodes
+          if(data.elements[i].tags.name != undefined ){
+            listOfFuel = listOfFuel + ' , ' + data.elements[i].tags.name;
+          }
+        }
+       //   listOfFuel = data.elements[0].tags.name;
+
+      })
+      .catch((err) => {
+        //set an optional error message here
+        //outputSpeech = err.message;
+      })
+      
+
+     
+    outputSpeech = "The latitude is " + latitude + " The longitude is " + longitude + '. The list is '
+    + listOfFuel;
+    
+   return outputSpeech;
+}
 
 const skillBuilder = Alexa.SkillBuilders.standard();
 
@@ -152,3 +223,4 @@ exports.handler = skillBuilder
     )
     .addErrorHandlers(GetAddressError,ErrorHandler)
     .lambda();
+
