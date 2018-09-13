@@ -173,8 +173,12 @@ async function Punction(address, city)
   newAddress = address + ',' + city
     
   //mapquest free tier allow for 15,000 requests a month.
-  mapQuestGeocode = "http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
+  //CROWD SOURCED         http://open.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location=
+  //COMMERIAL SOURCED     http://www.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location=
+  
+  mapQuestGeocode = "http://open.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location="
     + newAddress; 
+    
 
     //this geocodes the user address
     await getRemoteData(mapQuestGeocode)                                                                        //mapQuestGeoCode getting used
