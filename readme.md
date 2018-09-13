@@ -33,7 +33,9 @@ library,
 ## mapquest geolocation API Example call:
 ``` http://open.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location=410+Terry+Ave+North,Seattle ``` 
 
-where key=KEY will be the actual mapquest API key. The output will be in a json string.
+where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
+
+The output will be in a json string.
 
 ## overpass query API Example call:
 ``` http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22](around:8046.72,39.738453,-104.984853););out;%3E; ``` 
