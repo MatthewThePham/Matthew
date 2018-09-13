@@ -44,3 +44,23 @@ where around(around:8046.72,39.738453,-104.984853) has a parameter of 5 miles (8
 Lat will be 8046.72,39.738453 and Lng will be -104.984853
 
 The data=[out:json] will return a json string
+
+### Installation
+1. Clone the repository.
+
+	```bash
+	$ git clone https://gitlab.com/MatthewPh/AlexaTechForGood
+	```
+
+2. Navigating into the repository's root folder.
+
+	```bash
+	$ cd AlexaTechForGood
+	```
+
+3. Install npm dependencies by navigating into the `lambda/custom` directory and running the npm command: `npm install --save ask-sdk` for Alexa Skills Kit SDK 2.0 for Node.js.
+
+	```bash
+	$ cd lambda/custom
+	$ npm install --save ask-sdk
+	```
