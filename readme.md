@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
 
-### About project 
+## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
 are in rush and need the nearest location, such as a hospital, all using your voice. Simply ask for the area of interest,
 and an Alexa card will be sent onto your phone, containg the place name and address.
@@ -45,8 +45,7 @@ Lat will be 8046.72,39.738453 and Lng will be -104.984853
 
 The data=[out:json] will return a json string
 
-### Development of skill
-
+## Development of skill
 This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
 The API resources we used was [mapquest open geocoding](https://developer.mapquest.com/documentation/open/geocoding-api/) to get lat and lng from the user's location.
 We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 5 mile radius in that location.
