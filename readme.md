@@ -31,7 +31,7 @@ library,
 
 
 ## mapquest geolocation API Example call:
-``` http://open.mapquestapi.com/geocoding/v1/address?key=XSrWCuhRGcPPEYkYWIfwjIisN2vMyGct&location=410+Terry+Ave+North,Seattle ``` 
+``` http://open.mapquestapi.com/geocoding/v1/address?key=KEY&location=410+Terry+Ave+North,Seattle ``` 
 
 where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
 
