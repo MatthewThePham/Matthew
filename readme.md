@@ -45,6 +45,13 @@ Lat will be 8046.72,39.738453 and Lng will be -104.984853
 
 The data=[out:json] will return a json string
 
+### Development of skill
+
+This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
+The API resources we used was [mapquest open geocoding](https://developer.mapquest.com/documentation/open/geocoding-api/) to get lat and lng from the user's location.
+We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 5 mile radius in that location.
+Programming language used was Node.js. To use asyc/await in node.js, you must select Node.js version 8.10 during lambda runtime.
+
 ### Installation
 1. Clone the repository.
 
