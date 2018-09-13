@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
 
-### About project 
+## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
 are in rush and need the nearest location, such as a hospital, all using your voice. Simply ask for the area of interest,
 and an Alexa card will be sent onto your phone, containg the place name and address.
@@ -25,16 +25,17 @@ library,
 * [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 * [console for Alexa](https://developer.amazon.com/alexa/console/ask_)
 * [AWS Lambda backend](https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions)
-* [mapquest geolocation API Doc](https://developer.mapquest.com/documentation/geocoding-api/)
-* [overpass query API Doc](https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide)
+
+* [mapquest Open Geocoding API Doc](https://developer.mapquest.com/documentation/open/geocoding-api/)
+* [overpass query API Doc](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
 
 
 ## mapquest geolocation API Example call:
-``` https://www.mapquestapi.com/geocoding/v1/address?key=KEY&inFormat=kvp&outFormat=json&location=Denver%2C+CO&thumbMaps=false ``` 
+``` http://open.mapquestapi.com/geocoding/v1/address?key=KEY&location=410+Terry+Ave+North,Seattle ``` 
 
-where key=KEY will be the actual mapquest API key. The output will be in a json string.
+where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
 
-
+The output will be in a json string.
 
 ## overpass query API Example call:
 ``` http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22](around:8046.72,39.738453,-104.984853););out;%3E; ``` 
@@ -42,4 +43,30 @@ where key=KEY will be the actual mapquest API key. The output will be in a json 
 where around(around:8046.72,39.738453,-104.984853) has a parameter of 5 miles (8046.72 meters). 
 Lat will be 8046.72,39.738453 and Lng will be -104.984853
 
-The data=[out:json] will return a json string 
+The data=[out:json] will return a json string
+
+## Development of skill
+This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
+The API resources we used was [mapquest open geocoding](https://developer.mapquest.com/documentation/open/geocoding-api/) to get lat and lng from the user's location.
+We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 5 mile radius in that location.
+Programming language used was Node.js. To use asyc/await in node.js, you must select Node.js version 8.10 during lambda runtime.
+
+### Installation
+1. Clone the repository.
+
+	```bash
+	$ git clone https://gitlab.com/MatthewPh/AlexaTechForGood
+	```
+
+2. Navigating into the repository's root folder.
+
+	```bash
+	$ cd AlexaTechForGood
+	```
+
+3. Install npm dependencies by navigating into the `lambda/custom` directory and running the npm command: `npm install --save ask-sdk` for Alexa Skills Kit SDK 2.0 for Node.js.
+
+	```bash
+	$ cd lambda/custom
+	$ npm install --save ask-sdk
+	```
