@@ -5,19 +5,25 @@
 ## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
 are in rush and need the nearest location, such as a hospital, all using your voice. Simply ask for the area of interest,
-and an Alexa card will be sent onto your phone, containg the place name and address.
+and an Alexa card will be sent onto your phone, containing the place name and address.
 
 This project was created for the [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 and will be submitted in order to hopefully obtain the best use of category of open source data.
 
 We will try and support 
-hospital,
-shelter,
-recycling,
+
+//fuel has no special cases
+//charging stations need to list socket type.
+//police has no special cases
+//clinic has no special cases
+//waste_dispotal has no special cases
+
+
+fuel (gas stations),
+charging_station (for electric cars),
+clinic,
 police (police station),
 waste_disposal,
-bus_station,
-library,
 
 [Other places that can be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
