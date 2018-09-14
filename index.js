@@ -1,3 +1,10 @@
+//TODO 
+// MATTHEW: Add slots for user input
+// MIGUEL : Reverse geocode if no address if listed
+// PAROSH : Tell which is the closest place in your area.
+
+// UNDECIDED : Should have cycling feature, ie if no clinics are found, cycle to hospitals and vise versa.
+
 const Alexa = require('ask-sdk');
 
 //used for a permissions card if the user has not enabled location permission
@@ -44,11 +51,16 @@ const LaunchIntentHandler = {
           } 
           //the user has put their address in the text field
           else {
-            const ADDRESS_MESSAGE = await Punction(address.addressLine1, address.city)
+            var arrayOfData = await Punction(address.addressLine1, address.city)
+            
+            var messageOut = arrayOfData[0]
+            var counter = arrayOfData[1]
+
+            var outputSpeech = ' We have found ' + counter + ' places in your area. The closes place is BLANK' 
 
             response = responseBuilder
-              .speak(ADDRESS_MESSAGE)
-              .withStandardCard(ADDRESS_MESSAGE)
+              .speak(outputSpeech)
+              .withStandardCard('Places',messageOut)
               .getResponse();
           }
           return response;
@@ -154,12 +166,15 @@ const ErrorHandler = {
 // after geocoding, the lat and lng are stored as variables. These variables are passed into the 
 async function Punction(address, city)
 {
+  var amenity = 'clinic';
   var longitude = ''
   var latitude = ''
   var listOfFuel = ''
   var newAddress = ''
   var outputSpeech = ''
   var newAddress = ''
+  var counter = 0
+  var listToReturn = [];
 
   var mapQuestGeocode = ''
   var overpassString = ''
@@ -196,8 +211,9 @@ async function Punction(address, city)
       })
 
     //Overpass/openstreetmap is open source data so no limit in request.
-     overpassString = "http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22]"
-    + "(around:8046.72,"    //this is roughly 5 miles
+     overpassString = "http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22"
+    + amenity                     //this is the place/destination you want to find
+    + "%22](around:8046.72,"    //this is roughly 5 miles
     + latitude + ',' + longitude //this is the actual lat, lon
     + "););out;%3E;";
     
@@ -208,9 +224,30 @@ async function Punction(address, city)
         var data = JSON.parse(response);
 
         //gets 5 nodes and stores them into a list. Checks to make sure a name is present and not undef.
-        for (let i = 0; i < 6; i++) {  
-          if(data.elements[i].tags.name != undefined ){
-            listOfFuel = listOfFuel + ' , ' + data.elements[i].tags.name;
+        for (let i = 0; i < 5; i++) {  
+          if(data.elements[i].tags.name != undefined)
+          {                                                                           
+            counter++;
+
+            //adds and formats name of amenity into the string
+            //counterSignPost method is used to convert 1 to first, 2 to second, etc. for formatting
+            listOfFuel = listOfFuel + counterSignPost(counter) + ' amenity is ' + data.elements[i].tags.name;
+
+            if(data.elements[i].tags['addr:housenumber'] != undefined && data.elements[i].tags['addr:street'] != undefined && data.elements[i].tags['addr:city'] != undefined)
+            {
+              //if housenumber, street, and city are present, then add to the string
+              listOfFuel = listOfFuel + ', located at ' + data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
+            } else
+            {
+              //add lat and long to the string listoffuel instead of actual address if not present
+              listOfFuel = listOfFuel + ', located at longitude ' + data.elements[i].lon + ' and latitude ' + data.elements[i].lat;
+            }
+            if(data.elements[i].tags.phone != undefined)
+            {
+              //adds phone number to the string
+              listOfFuel = listOfFuel + ', phone number: ' + data.elements[i].tags.phone;
+            }
+
           }
         }
       })
@@ -219,11 +256,30 @@ async function Punction(address, city)
         //outputSpeech = err.message;
       })
       
-    //set data to this returned string, outputSpeech
-    outputSpeech = "The latitude is " + latitude + " The longitude is " + longitude + '. The list is '
-    + listOfFuel;
-    
-   return outputSpeech;
+      /*//set data to this returned string, outputSpeech
+      outputSpeech = "The latitude is " + latitude + " The longitude is " + longitude + '. The list is '
+      + listOfFuel;
+      return outputSpeech;*/
+   
+      //adds the string and the counter to the array
+   listToReturn.push(listOfFuel);
+   listToReturn.push(counter);
+
+
+   return listToReturn; //returns the array with the string and counter
+
+}
+
+function counterSignPost(counter)
+{
+  if(counter == 1)
+  {return ' The first ';}
+  else if(counter == 2)
+  {return ' , \n the second ';}
+  else if(counter == 3)
+  {return ', \n the third ';}
+  else
+  {return ', \n the next ';}
 }
 
 
