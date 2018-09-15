@@ -31,6 +31,7 @@ waste_disposal,
 * [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 * [console for Alexa](https://developer.amazon.com/alexa/console/ask_)
 * [AWS Lambda backend](https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions)
+* [Private policy of skill](https://sites.google.com/view/projectnearme/home)
 
 * [mapquest Open Geocoding API Doc](https://developer.mapquest.com/documentation/open/geocoding-api/)
 * [overpass query API Doc](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
