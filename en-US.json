@@ -1,0 +1,86 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "gas app",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": [
+                        "gas"
+                    ]
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "FindIntent",
+                    "slots": [
+                        {
+                            "name": "amenityOne",
+                            "type": "amenity"
+                        },
+                        {
+                            "name": "amenityTwo",
+                            "type": "amenity"
+                        }
+                    ],
+                    "samples": [
+                        "{amenityOne} {amenityTwo}",
+                        "{amenityOne}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "amenity",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "disposal"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "station"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "waste"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "police"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "clinic"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "charging"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fuel"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
