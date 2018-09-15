@@ -1,5 +1,5 @@
 //TODO 
-// MATTHEW: Add slots for user input
+// MATTHEW: 
 // MIGUEL : Reverse geocode if no address if listed
 // PAROSH : Tell which is the closest place in your area.
 
@@ -16,67 +16,26 @@ const LaunchIntentHandler = {
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest'
     },
     async handle(handlerInput) {
-      //set necessary values to the handlerInput
-        const { requestEnvelope, serviceClientFactory, responseBuilder } = handlerInput;
+      var outputSpeech = ' Please say the name of the area'
+      var repromptSpeech = ' Please say the area name '
 
       //generate a consent token for user permission to use their address
-        const consentToken = requestEnvelope.context.System.user.permissions
-          && requestEnvelope.context.System.user.permissions.consentToken;
-
-
+        const consentToken = handlerInput.requestEnvelope.context.System.user.permissions
+          && handlerInput.requestEnvelope.context.System.user.permissions.consentToken;
+          
         //actual code for address fetching  
         if (!consentToken) {
-          return responseBuilder
+          return handlerInput.responseBuilder
             .speak('Please enable Location permissions in the Amazon Alexa app.')
             .withAskForPermissionsConsentCard(PERMISSIONS)
             .getResponse();
         }
-        try {
-          //there is a consent token and we are fetching the user address
-          const { deviceId } = requestEnvelope.context.System.device;
-          const deviceAddressServiceClient = serviceClientFactory.getDeviceAddressServiceClient();
-          const address = await deviceAddressServiceClient.getFullAddress(deviceId);
-    
-          console.log('Address successfully retrieved, now responding to user.');
-    
-          let response;
 
-          //if the user has not put anything in these address text field yet
-          if (address.addressLine1 === null && address.city === null) {
+        return handlerInput.responseBuilder
+        .speak(outputSpeech)
+        .reprompt(repromptSpeech)
+        .getResponse();
 
-            response = responseBuilder
-              .speak('It looks like you don\'t have an address set. You can set your address from the companion app.')
-              .getResponse();
-
-          } 
-          //the user has put their address in the text field
-          else {
-            var arrayOfData = await Punction(address.addressLine1, address.city)
-            
-            var messageOut = arrayOfData[0]
-            var counter = arrayOfData[1]
-
-            var outputSpeech = ' We have found ' + counter + ' places in your area. The closes place is BLANK' 
-
-            response = responseBuilder
-              .speak(outputSpeech)
-              .withStandardCard('Places',messageOut)
-              .getResponse();
-          }
-          return response;
-        
-        } 
-        //there is some sort of error when fetching the address
-        catch (error) {
-          if (error.name !== 'ServiceError') {
-            const response = responseBuilder
-              .speak('Uh Oh. Looks like something went wrong.')
-              .getResponse();
-              return response;
-          }
-          throw error;
-        }
-        
         
     },
 };
@@ -89,8 +48,17 @@ const HelpIntentHandler = {
     },
     handle(handlerInput) {
 
-        var speechText = ' These are some commands in the app';
-        const repromptSpeech = ' These are some commands in the app ';
+        var speechText = ' Saying, Find clinic, will show you local clinics. Other places include'
+        +' charging_station (for electric cars),'
+        +' clinic,'
+        +' police (police station),'
+        +' waste_disposal';
+
+        const repromptSpeech = ' Saying, Find clinic, will show you local clinics. Other places include'
+        +' charging_station (for electric cars),'
+        +' clinic,'
+        +' police (police station),'
+        +' waste_disposal';
 
         return handlerInput.responseBuilder
             .speak(speechText)
@@ -99,6 +67,87 @@ const HelpIntentHandler = {
             .getResponse();
     },
 };
+
+const FindIntentHandler = {
+  canHandle(handlerInput) {
+      const request = handlerInput.requestEnvelope.request;
+
+      return request.type === 'IntentRequest' &&
+          request.intent.name === 'FindIntent'
+  },
+  async handle(handlerInput) {
+    //set necessary values to the handlerInput
+      const { requestEnvelope, serviceClientFactory, responseBuilder } = handlerInput;
+
+        //user input aka slots
+        let slots = handlerInput.requestEnvelope.request.intent.slots;
+
+        var tempData = '';
+
+        const firstWord = (slots.amenityOne.value ? slots.amenityOne.value : '');
+        const secondWord = (slots.amenityTwo.value ? slots.amenityTwo.value : '');
+        
+        if(secondWord === ''){
+          tempData = firstWord;
+        }
+        else{
+          tempData = firstWord + '_' + secondWord;
+        }  
+
+      //actual code for address fetching  
+      try {
+        //there is a consent token and we are fetching the user address
+        const { deviceId } = requestEnvelope.context.System.device;
+        const deviceAddressServiceClient = serviceClientFactory.getDeviceAddressServiceClient();
+        const address = await deviceAddressServiceClient.getFullAddress(deviceId);
+  
+        console.log('Address successfully retrieved, now responding to user.');
+  
+        let response;
+
+        //if the user has not put anything in these address text field yet
+        if (address.addressLine1 === null && address.city === null) {
+
+          response = responseBuilder
+            .speak('It looks like you don\'t have an address set. You can set your address from the companion app.')
+            .getResponse();
+
+        } 
+        //the user has put their address in the text field
+        else {
+          var arrayOfData = await Punction(address.addressLine1, address.city, tempData)
+          
+          var messageOut = arrayOfData[0]
+          var counter = arrayOfData[1]
+          var firstNSeconds = firstWord + 's ' + secondWord
+          var firstNSecond = firstWord + ' ' + secondWord
+
+          var outputSpeech = ' We have found ' + counter + ' ' + firstNSeconds
+          + ' in your area. The closest' + firstNSecond + ' is BLANK '  
+
+          response = responseBuilder
+            .speak(outputSpeech)
+            .withStandardCard(firstNSecond,messageOut)
+            .getResponse();
+        }
+        return response;
+      
+      } 
+      //there is some sort of error when fetching the address
+      catch (error) {
+        if (error.name !== 'ServiceError') {
+          const response = responseBuilder
+            .speak('Uh Oh. Looks like something went wrong.')
+            .getResponse();
+            return response;
+        }
+        throw error;
+      }
+      
+      
+  },
+};
+
 
 const CancelAndStopIntentHandler = {
     canHandle(handlerInput) {
@@ -143,8 +192,7 @@ const GetAddressError = {
         .reprompt(messages.LOCATION_FAILURE)
         .getResponse();
     },
-  };
-
+};
 
 const ErrorHandler = {
     canHandle() {
@@ -164,9 +212,10 @@ const ErrorHandler = {
 
 //This function parses out the whitespaces in the address and city, and calls the getRemoteData() function for geocoding
 // after geocoding, the lat and lng are stored as variables. These variables are passed into the 
-async function Punction(address, city)
+async function Punction(address, city, place)
 {
-  var amenity = 'clinic';
+  var amenity = place
+
   var longitude = ''
   var latitude = ''
   var listOfFuel = ''
@@ -213,7 +262,7 @@ async function Punction(address, city)
     //Overpass/openstreetmap is open source data so no limit in request.
      overpassString = "http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22"
     + amenity                     //this is the place/destination you want to find
-    + "%22](around:8046.72,"    //this is roughly 5 miles
+    + "%22](around:16093.4,"    //this is roughly 10 miles
     + latitude + ',' + longitude //this is the actual lat, lon
     + "););out;%3E;";
     
@@ -231,7 +280,7 @@ async function Punction(address, city)
 
             //adds and formats name of amenity into the string
             //counterSignPost method is used to convert 1 to first, 2 to second, etc. for formatting
-            listOfFuel = listOfFuel + counterSignPost(counter) + ' amenity is ' + data.elements[i].tags.name;
+            listOfFuel = listOfFuel + counterSignPost(counter) + ' ' + amenity + ' is ' + data.elements[i].tags.name;
 
             if(data.elements[i].tags['addr:housenumber'] != undefined && data.elements[i].tags['addr:street'] != undefined && data.elements[i].tags['addr:city'] != undefined)
             {
@@ -282,7 +331,6 @@ function counterSignPost(counter)
   {return ', \n the next ';}
 }
 
-
 //This will create a proper web API call using https, checking for different protocol errors
 //For all the types of protocol errors, refer to https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 async function getRemoteData (url) {
@@ -306,10 +354,10 @@ const skillBuilder = Alexa.SkillBuilders.standard();
 exports.handler = skillBuilder
     .addRequestHandlers(
         LaunchIntentHandler,
+        FindIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler
     )
     .addErrorHandlers(GetAddressError,ErrorHandler)
     .lambda();
-
