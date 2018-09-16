@@ -237,10 +237,11 @@ async function Punction(address, city, place)
   var latitude = ''
   var listOfFuel = ''
   var newAddress = ''
-  var newAddress = ''
   var counter = 0
+
   var listToReturn = []
   var distanceList = []
+  var addressList = []
   var outputSpeak = ''
 
   var forwardGeocode = ''
@@ -249,7 +250,6 @@ async function Punction(address, city, place)
     //format string algorithm
   address = address.replace(/ /g,'+')
   city = city.replace(/ /g,'+')
-
 
   //Change this to formatted string to look like "410+Terry+Ave+North,Seattle"
   newAddress = address + ',' + city
@@ -292,14 +292,16 @@ async function Punction(address, city, place)
         //could optimize code with mapping
         //gets 5 nodes and stores them into a list. Checks to make sure a name is present and not undef.
         for (let i = 0; i < 5; i++) {  
+          var tempDistance = ''
+
           if(data.elements[i].tags.name != undefined)
           {                                                                           
             counter++;
 
-            var tempDistance = distanceFormula(latitude, longitude, data.elements[i].lat, data.elements[i].lon);
+            tempDistance = await distanceFormula(latitude, longitude, data.elements[i].lat, data.elements[i].lon);
             //---------------------------------------------------------------------------------------------------
             distanceList.push(data.elements[i].tags.name);
-            distanceList.push(distanceFormula(latitude, longitude, data.elements[i].lat, data.elements[i].lon));
+            distanceList.push(tempDistance);
             //---------------------------------------------------------------------------------------------------
 
             //adds and formats name of amenity into the string
@@ -310,13 +312,19 @@ async function Punction(address, city, place)
             if(data.elements[i].tags['addr:housenumber'] != undefined && data.elements[i].tags['addr:street'] != undefined && data.elements[i].tags['addr:city'] != undefined)
             {
               //if housenumber, street, and city are present, then add to the string
-              listOfFuel = listOfFuel + ', Address is ' + data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
+              var tempStringforAddress = data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
+              
+              listOfFuel = listOfFuel + ', Address is ' + tempStringforAddress;
+              //push the address to address list for later
+              addressList.push(tempStringforAddress)
             } else
             {
               //add lat and long to the string listoffuel instead of actual address if not present
              var tempAddress = await reverseGeocode(data.elements[i].lat,data.elements[i].lon)
-             listOfFuel = listOfFuel + ', Address is ' + tempAddress
+             listOfFuel = listOfFuel + ' Address is ' + tempAddress
 
+             //push the address to address list for later
+             addressList.push(tempAddress)
              // listOfFuel = listOfFuel + ', located at longitude ' + data.elements[i].lon + ' and latitude ' + data.elements[i].lat;
             }
             if(data.elements[i].tags.phone != undefined)
@@ -333,15 +341,20 @@ async function Punction(address, city, place)
         //outputSpeech = err.message;
       })
           
-   let tempArray = findMin(distanceList) 
-   outputSpeak = ', ' + tempArray[0] + ' , and will be ,' + tempArray[1].toFixed(2) + ', miles away'
+   var tempArray = findMin(distanceList,addressList) 
 
-  //adds the string and the counter to the array
+   if(tempArray == -1 ){
+    outputSpeak = ''
+   }else{
+    outputSpeak = ', ' + tempArray[0] + ' , and will be ,' + tempArray[1].toFixed(2) + ', miles away. Located at ' + tempArray[2]
+   }
+
+  //adds the string cards and the counter to the array and nearest area
    listToReturn.push(listOfFuel);
    listToReturn.push(counter);
    listToReturn.push(outputSpeak);
 
-    //returns the array with the string and counter
+    //returns the array with the string card and counter and nearest area
    return listToReturn; 
 
 }
@@ -380,25 +393,41 @@ function degToRad(deg)
   return deg * (Math.PI/180)
 }
 
-function findMin(array){
+function findMin(array , addressArray){
   var returnArray = []
 
-  var minimum = array[1];
-  var nameOfmin = '';
+  if(array[1] != undefined){
+   var minimum = array[1];
+   var nameOfmin = '';
+   var returnAddress = addressArray[0]
+   var miniCounter = 0
 
-for (let i = 0; i < array.length; i++)
-  {
-    //means the number odd ake lat and lng
-    if(minimum > array[i] && i % 2 == 1)
+  for (let i = 1; i < array.length; i++)
     {
-      minimum = array[i];
-      nameOfmin = array[i-1];
-    }
+    //means the number odd ake lat and lng
+     if(minimum >= array[i] && i % 2 == 1)
+     {
+        minimum = array[i];
+        nameOfmin = array[i-1];
+        returnAddress = addressArray[miniCounter] 
+
+      }
+      if(i % 2 == 1){
+        miniCounter = miniCounter + 1
+      }
 
 
+   }
+
+
+    returnArray.push(nameOfmin)
+    returnArray.push(minimum)
+    returnArray.push(returnAddress)
+
+  }else{
+    let tempVar = -1
+    return tempVar
   }
-  returnArray.push(nameOfmin)
-  returnArray.push(minimum)
 
   return returnArray
   //return minimum;

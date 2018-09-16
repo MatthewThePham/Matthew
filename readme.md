@@ -1,14 +1,20 @@
 # Project NearMe
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
+[![region](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)
+
+[![storePhoto](https://gitlab.com/MatthewPh/ProjectNearMe/raw/master/alexaStore.png)]
 
 ## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
 are in rush and need the nearest location, such as a hospital, all using your voice. Simply ask for the area of interest,
 and an Alexa card will be sent onto your phone, containing the place name and address.
+We decided for our project to fueled by Open Street Map in order to promote open data and expand the growing open source community.
+
+We decided for our project to fueled by Open Street Map in order to promote open data and expand the growing open source community.
 
 This project was created for the [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
-and will be submitted in order to hopefully obtain the best use of category of open source data.
+and will be submitted for the category of open source data.
 
 We will try and support 
 fuel,
@@ -39,11 +45,16 @@ Here is the [Devpost link](https://devpost.com/software/test-ja56sd) with a vide
 * [overpass query API Wiki](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
 
 
-## Opencagedata Open Geocoding Example call:
+### Opencagedata Open Geocoding Example call:
 ``` https://api.opencagedata.com/geocode/v1/json?q=410%20Terry%20Ave%20North%2CSeattle&key=KEY&language=en&pretty=1 ``` 
 
-where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
-The output will be in a json string.
+Where key=KEY will be the actual Opencagedata API key.
+
+q=410%20Terry%20Ave%20North%2CSeattle will call a query having 410+Terry+Ave+North as the address and Seattle as the city.
+
+&pretty=1 will make the json file much more readiable by adding white spaces.
+
+json? will make the output a json string..
 
 ## overpass query API Example call:
 ``` http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22](around:8046.72,39.738453,-104.984853););out;%3E; ``` 
@@ -55,7 +66,7 @@ The data=[out:json] will return a json string
 
 ## Development of skill
 This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
-The API resources we used was [Opencagedata](https://opencagedata.com/demo) for forward/reverse geocoding.
+The API resources we used was [Opencagedata](https://opencagedata.com/demo), an official third party provider of OSM Nominatim, for forward/reverse geocoding.
 We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 10 mile radius in that location.
 Programming language used was Node.js. To use asyc/await in node.js, you must select Node.js version 8.10 during lambda runtime.
 
