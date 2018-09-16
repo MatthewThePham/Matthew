@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "gas app",
+            "invocationName": "project near me",
             "intents": [
                 {
                     "name": "AMAZON.FallbackIntent",
@@ -43,6 +43,46 @@
                 {
                     "name": "amenity",
                     "values": [
+                        {
+                            "name": {
+                                "value": "recycling"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "restaurant"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "office"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "post"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fire"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hospital"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "library"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "cafe"
+                            }
+                        },
                         {
                             "name": {
                                 "value": "disposal"
