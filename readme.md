@@ -57,7 +57,7 @@ The data=[out:json] will return a json string
 
 ## Development of skill
 This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
-The API resources we used was [Opencagedata](https://opencagedata.com/demo) for forward/reverse geocoding.
+The API resources we used was [Opencagedata](https://opencagedata.com/demo), an official third party provider of OSM Nominatim, for forward/reverse geocoding.
 We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 10 mile radius in that location.
 Programming language used was Node.js. To use asyc/await in node.js, you must select Node.js version 8.10 during lambda runtime.
 
