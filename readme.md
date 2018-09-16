@@ -60,13 +60,13 @@ Programming language used was Node.js. To use asyc/await in node.js, you must se
 1. Clone the repository.
 
 	```bash
-	$ git clone https://gitlab.com/MatthewPh/AlexaTechForGood
+	$ git clone https://gitlab.com/MatthewPh/ProjectNearMe
 	```
 
 2. Navigating into the repository's root folder.
 
 	```bash
-	$ cd AlexaTechForGood
+	$ cd ProjectNearMe
 	```
 
 3. Install npm dependencies by navigating into the `lambda/custom` directory and running the npm command: `npm install --save ask-sdk` for Alexa Skills Kit SDK 2.0 for Node.js.
