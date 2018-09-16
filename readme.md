@@ -36,7 +36,7 @@ post office
 * [overpass query API Wiki](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
 
 
-## mapquest geolocation API Example call:
+## Opencagedata Open Geocoding Example call:
 ``` https://api.opencagedata.com/geocode/v1/json?q=410%20Terry%20Ave%20North%2CSeattle&key=KEY&language=en&pretty=1 ``` 
 
 where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
