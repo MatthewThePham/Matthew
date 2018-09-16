@@ -1,7 +1,7 @@
 //TODO 
-// MATTHEW: Tech lead
+// MATTHEW: Tech lead, and make sure european has KM units
 // MIGUEL : Optimize Reverse geocode if no address if listed
-// PAROSH : Lead in Tech
+// PAROSH : Mapping calls?
 
 // UNDECIDED : Should have cycling feature, ie if no clinics are found, cycle to hospitals and vise versa.
 
@@ -119,6 +119,7 @@ const FindIntentHandler = {
           
           var messageOut = arrayOfData[0]
           var counter = arrayOfData[1]
+          var closePlace = arrayOfData[2]
           var firstNSecond = firstWord + ' ' + secondWord
 
           if(counter == 0){
@@ -127,16 +128,16 @@ const FindIntentHandler = {
             + ' in your area. Sorry, for the inconvenience. '
           }  
           else if(counter == 1){
-            //there is only one data fetched
+            //there is only one node data fetched
             var outputSpeech = ' I found ' + counter + ' ' + firstNSecond
-            + ' in your area. The closest' + firstNSecond + ' is BLANK. '
-            +  'I sent a display card with more details to your Alexa app.'
+            + ' in your area. The closest' + firstNSecond + ' is' +  closePlace
+            +  ' .I sent a display card with more details to your Alexa app.'
           }
           else{
-            //there is more data fetched
+            //there is more tha one node data fetched
             var outputSpeech = ' I found ' + counter + ' ' + firstNSecond
-            + ' in your area. The closest' + firstNSecond + ' is BLANK. '
-            +  'I sent a display card with more locations and details to your Alexa app.'
+            + ' in your area. The closest' + firstNSecond + ' is' +  closePlace
+            +  ' .I sent a display card with more locations and details to your Alexa app.'
           } 
 
           response = responseBuilder
@@ -223,10 +224,11 @@ const ErrorHandler = {
     },
 };
 
-/********** FUNCTIONS HERE **************/
+/********** MAIN FUNCTION HERE **************/
 
 //This function parses out the whitespaces in the address and city, and calls the getRemoteData() function for geocoding
 // after geocoding, the lat and lng are stored as variables. These variables are passed into the 
+// overpass query and the address info is recieved. Reverse geocoding is also done, if no address is listed.
 async function Punction(address, city, place)
 {
   var amenity = place
@@ -235,10 +237,11 @@ async function Punction(address, city, place)
   var latitude = ''
   var listOfFuel = ''
   var newAddress = ''
-  var outputSpeech = ''
   var newAddress = ''
   var counter = 0
-  var listToReturn = [];
+  var listToReturn = []
+  var distanceList = []
+  var outputSpeak = ''
 
   var forwardGeocode = ''
   var overpassString = ''
@@ -251,7 +254,7 @@ async function Punction(address, city, place)
   //Change this to formatted string to look like "410+Terry+Ave+North,Seattle"
   newAddress = address + ',' + city
     
-  //Supported by OSM nomatim page, and uses OSM data
+  //Supported by OSM nomatim, stated their wiki page, and uses OSM data
   //Opencagedata 2,500 requests/day 
   forwardGeocode = "https://api.opencagedata.com/geocode/v1/json?q="
     + newAddress
@@ -286,83 +289,133 @@ async function Punction(address, city, place)
       .then(async (response) => {
         var data = JSON.parse(response);
       
-        //need to make for loop async as await has issues inside for loop
+        //could optimize code with mapping
         //gets 5 nodes and stores them into a list. Checks to make sure a name is present and not undef.
         for (let i = 0; i < 5; i++) {  
           if(data.elements[i].tags.name != undefined)
           {                                                                           
             counter++;
 
+            var tempDistance = distanceFormula(latitude, longitude, data.elements[i].lat, data.elements[i].lon);
+            //---------------------------------------------------------------------------------------------------
+            distanceList.push(data.elements[i].tags.name);
+            distanceList.push(distanceFormula(latitude, longitude, data.elements[i].lat, data.elements[i].lon));
+            //---------------------------------------------------------------------------------------------------
+
             //adds and formats name of amenity into the string
             //counterSignPost method is used to convert 1 to first, 2 to second, etc. for formatting
-            listOfFuel = listOfFuel + counterSignPost(counter) + ' ' + amenity + ' is ' + data.elements[i].tags.name;
+            listOfFuel = listOfFuel + counterSignPost(counter) + ' ' + amenity + ' is ' + data.elements[i].tags.name 
+            + ', Located '+ tempDistance.toFixed(2) + ' miles from your area, ';
 
             if(data.elements[i].tags['addr:housenumber'] != undefined && data.elements[i].tags['addr:street'] != undefined && data.elements[i].tags['addr:city'] != undefined)
             {
               //if housenumber, street, and city are present, then add to the string
-              listOfFuel = listOfFuel + ', located at ' + data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
+              listOfFuel = listOfFuel + ', Address is ' + data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
             } else
             {
               //add lat and long to the string listoffuel instead of actual address if not present
              var tempAddress = await reverseGeocode(data.elements[i].lat,data.elements[i].lon)
-             listOfFuel = listOfFuel + ', located at ' + tempAddress
+             listOfFuel = listOfFuel + ', Address is ' + tempAddress
 
              // listOfFuel = listOfFuel + ', located at longitude ' + data.elements[i].lon + ' and latitude ' + data.elements[i].lat;
             }
             if(data.elements[i].tags.phone != undefined)
             {
               //adds phone number to the string
-              listOfFuel = listOfFuel + ', phone number: ' + data.elements[i].tags.phone;
+              listOfFuel = listOfFuel + '. Phone number is ' + data.elements[i].tags.phone;
             }
 
           }
         }
-        
       })
       .catch((err) => {
         //set an optional error message here
         //outputSpeech = err.message;
       })
-      
-      /*//set data to this returned string, outputSpeech
-      outputSpeech = "The latitude is " + latitude + " The longitude is " + longitude + '. The list is '
-      + listOfFuel;
-      return outputSpeech;*/
-   
-      //adds the string and the counter to the array
+          
+   let tempArray = findMin(distanceList) 
+   outputSpeak = ', ' + tempArray[0] + ' , and will be ,' + tempArray[1].toFixed(2) + ', miles away'
+
+  //adds the string and the counter to the array
    listToReturn.push(listOfFuel);
    listToReturn.push(counter);
+   listToReturn.push(outputSpeak);
 
-
-   return listToReturn; //returns the array with the string and counter
+    //returns the array with the string and counter
+   return listToReturn; 
 
 }
 
 function counterSignPost(counter)
 {
   if(counter == 1)
-  {return ' The first';}
+  {return '  The first';}
   else if(counter == 2)
-  {return ' \n The second ';}
+  {return '  \n The second';}
   else if(counter == 3)
-  {return ' \n The third ';}
+  {return '  \n The third';}
   else
-  {return ' \n The next ';}
+  {return '  \n The next';}
+}
+
+//------------------------------------------HELPER FUNCTIONS---------------------------------------------------------
+function distanceFormula(lat1, lon1, lat2, lon2)
+{
+  var RadiusOfEarth = 6371; // in KM
+  var dLat = degToRad(lat2-lat1); 
+  var dLon = degToRad(lon2-lon1); 
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(degToRad(lat1)) * Math.cos(degToRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+  var b = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+
+  var c = RadiusOfEarth * b; // in KM
+
+  var milesConversion =  0.621 * c // c is in kilometers
+  return milesConversion
+  //return c;
+}
+
+function degToRad(deg)
+{
+  return deg * (Math.PI/180)
+}
+
+function findMin(array){
+  var returnArray = []
+
+  var minimum = array[1];
+  var nameOfmin = '';
+
+for (let i = 0; i < array.length; i++)
+  {
+    //means the number odd ake lat and lng
+    if(minimum > array[i] && i % 2 == 1)
+    {
+      minimum = array[i];
+      nameOfmin = array[i-1];
+    }
+
+
+  }
+  returnArray.push(nameOfmin)
+  returnArray.push(minimum)
+
+  return returnArray
+  //return minimum;
 }
 
 async function reverseGeocode(lats, lngs){
 
-//Supported by OSM nomatim page, and uses OSM data
-//Opencagedata 2,500 requests/day (need to do a lot of reverse geocoding compared to geocoding)
+ //Supported by OSM nomatim, stated their wiki page, and uses OSM data
+ //Opencagedata 2,500 requests/day (need to do a lot of reverse geocoding compared to geocoding)
 //https://api.opencagedata.com/geocode/v1/json?q=33.682028+-112.085437&key=5207b6bca04849738781981bbab1b875
 var request = 'https://api.opencagedata.com/geocode/v1/json?q='
 + lats + '+' + lngs
 //+ '33.682028' + '+' + '-112.085437'
 + '&key=5207b6bca04849738781981bbab1b875'; 
 
-
 /*
-//Supported by OSM nomatim page, and uses OSM data
+ //Supported by OSM nomatim, stated their wiki page, and uses OSM data
 // locationiq 10,000 requests/day (need to do a lot of reverse geocoding compared to geocoding)
  var request = 'https://us1.locationiq.com/v1/reverse.php?key=acf10b082a8c72&'
   +  'lat=' + lats + '&lon=' + lngs
@@ -384,7 +437,7 @@ var returnString = '';
 
     returnString = street + ',' + city
 
- // returnString = data.display_name   //THIS IS FOR locationiq
+ // returnString = data.display_name   //THIS IS FOR locationiq. Only 2 addresses are fetched?
     
   })
   .catch((err) => {
@@ -398,6 +451,7 @@ var returnString = '';
 
 //This will create a proper web API call using https, checking for different protocol errors
 //For all the types of protocol errors, refer to https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+//R
 async function getRemoteData (url) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? require('https') : require('http');
@@ -413,6 +467,7 @@ async function getRemoteData (url) {
   })
 };
 
+//-------------------------------------HELPER FUNCTIONS--------------------------------------------------------------
 
 const skillBuilder = Alexa.SkillBuilders.standard();
 

@@ -26,6 +26,9 @@ post office
 
 [Other places that can be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
+### Video Demo
+Here is the [Devpost link](https://devpost.com/software/test-ja56sd) with a video demo of our skill.
+
 ### Links 
 * [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 * [console for Alexa](https://developer.amazon.com/alexa/console/ask_)
@@ -36,7 +39,7 @@ post office
 * [overpass query API Wiki](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
 
 
-## mapquest geolocation API Example call:
+## Opencagedata Open Geocoding Example call:
 ``` https://api.opencagedata.com/geocode/v1/json?q=410%20Terry%20Ave%20North%2CSeattle&key=KEY&language=en&pretty=1 ``` 
 
 where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
@@ -60,13 +63,13 @@ Programming language used was Node.js. To use asyc/await in node.js, you must se
 1. Clone the repository.
 
 	```bash
-	$ git clone https://gitlab.com/MatthewPh/AlexaTechForGood
+	$ git clone https://gitlab.com/MatthewPh/ProjectNearMe
 	```
 
 2. Navigating into the repository's root folder.
 
 	```bash
-	$ cd AlexaTechForGood
+	$ cd ProjectNearMe
 	```
 
 3. Install npm dependencies by navigating into the `lambda/custom` directory and running the npm command: `npm install --save ask-sdk` for Alexa Skills Kit SDK 2.0 for Node.js.
