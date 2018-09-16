@@ -32,15 +32,14 @@ post office
 * [AWS Lambda backend](https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions)
 * [Private policy of skill](https://sites.google.com/view/projectnearme/home)
 
-* [mapquest Open Geocoding API Doc](https://developer.mapquest.com/documentation/open/geocoding-api/)
-* [overpass query API Doc](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
+* [Opencagedata Open Geocoding API Demo](https://opencagedata.com/demo)
+* [overpass query API Wiki](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example)
 
 
 ## mapquest geolocation API Example call:
-``` http://open.mapquestapi.com/geocoding/v1/address?key=KEY&location=410+Terry+Ave+North,Seattle ``` 
+``` https://api.opencagedata.com/geocode/v1/json?q=410%20Terry%20Ave%20North%2CSeattle&key=KEY&language=en&pretty=1 ``` 
 
 where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
-
 The output will be in a json string.
 
 ## overpass query API Example call:
@@ -53,8 +52,8 @@ The data=[out:json] will return a json string
 
 ## Development of skill
 This skill uses the [Alexa Skills Kit SDK 2.0 for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs) for Alexa skill libraries.
-The API resources we used was [mapquest open geocoding](https://developer.mapquest.com/documentation/open/geocoding-api/) to get lat and lng from the user's location.
-We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 5 mile radius in that location.
+The API resources we used was [Opencagedata](https://opencagedata.com/demo) for forward/reverse geocoding.
+We used the fetched user's lat and lng into an [overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_API_by_Example) to get selected areas in a 10 mile radius in that location.
 Programming language used was Node.js. To use asyc/await in node.js, you must select Node.js version 8.10 during lambda runtime.
 
 ### Installation
