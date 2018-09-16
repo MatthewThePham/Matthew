@@ -312,18 +312,19 @@ async function Punction(address, city, place)
             if(data.elements[i].tags['addr:housenumber'] != undefined && data.elements[i].tags['addr:street'] != undefined && data.elements[i].tags['addr:city'] != undefined)
             {
               //if housenumber, street, and city are present, then add to the string
-              listOfFuel = listOfFuel + ', Address is ' + data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
+              var tempStringforAddress = data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city'];
               
+              listOfFuel = listOfFuel + ', Address is ' + tempStringforAddress;
               //push the address to address list for later
-              addressList[i] = data.elements[i].tags['addr:housenumber'] + ' ' + data.elements[i].tags['addr:street'] + ', ' + data.elements[i].tags['addr:city']
+              addressList.push(tempStringforAddress)
             } else
             {
               //add lat and long to the string listoffuel instead of actual address if not present
              var tempAddress = await reverseGeocode(data.elements[i].lat,data.elements[i].lon)
-             listOfFuel = listOfFuel + ', Address is ' + tempAddress
+             listOfFuel = listOfFuel + ' Address is ' + tempAddress
 
              //push the address to address list for later
-             addressList[i] = tempAddress
+             addressList.push(tempAddress)
              // listOfFuel = listOfFuel + ', located at longitude ' + data.elements[i].lon + ' and latitude ' + data.elements[i].lat;
             }
             if(data.elements[i].tags.phone != undefined)
@@ -398,7 +399,8 @@ function findMin(array , addressArray){
   if(array[1] != undefined){
    var minimum = array[1];
    var nameOfmin = '';
-   var returnAddress
+   var returnAddress = addressArray[0]
+   var miniCounter = 0
 
   for (let i = 1; i < array.length; i++)
     {
@@ -407,11 +409,17 @@ function findMin(array , addressArray){
      {
         minimum = array[i];
         nameOfmin = array[i-1];
-        returnAddress = addressArray[i]
+        returnAddress = addressArray[miniCounter] 
+
+      }
+      if(i % 2 == 1){
+        miniCounter = miniCounter + 1
       }
 
 
    }
+
+
     returnArray.push(nameOfmin)
     returnArray.push(minimum)
     returnArray.push(returnAddress)
