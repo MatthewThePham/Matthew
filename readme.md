@@ -11,19 +11,18 @@ This project was created for the [Alexa Tech For Good Hackaton](https://alexatec
 and will be submitted in order to hopefully obtain the best use of category of open source data.
 
 We will try and support 
-
-//fuel has no special cases
-//charging stations need to list socket type.
-//police has no special cases
-//clinic has no special cases
-//waste_dispotal has no special cases
-
-
-fuel (gas stations),
-charging_station (for electric cars),
+fuel,
+charging station,
 clinic,
-police (police station),
-waste_disposal,
+hospital,
+police,
+waste disposal,
+cafe,
+library,
+fire station,
+restaurant,
+bank,
+post office
 
 [Other places that can be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
