@@ -1,6 +1,8 @@
 # Project NearMe
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
+[![region](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)
+
 
 ## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
