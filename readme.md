@@ -26,6 +26,9 @@ post office
 
 [Other places that can be added](https://wiki.openstreetmap.org/wiki/Key:amenity)
 
+### Video Demo
+Here is a the  [Devpost link](https://devpost.com/software/test-ja56sd) with a video demo of our skill.
+
 ### Links 
 * [Alexa Tech For Good Hackaton](https://alexatechforgood.devpost.com/)
 * [console for Alexa](https://developer.amazon.com/alexa/console/ask_)
