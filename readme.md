@@ -44,8 +44,13 @@ Here is the [Devpost link](https://devpost.com/software/test-ja56sd) with a vide
 ## Opencagedata Open Geocoding Example call:
 ``` https://api.opencagedata.com/geocode/v1/json?q=410%20Terry%20Ave%20North%2CSeattle&key=KEY&language=en&pretty=1 ``` 
 
-where key=KEY will be the actual mapquest API key. 410+Terry+Ave+North will be the address1 and Seattle is the city.
-The output will be in a json string.
+Where key=KEY will be the actual Opencagedata API key.
+
+q=410%20Terry%20Ave%20North%2CSeattle will call a query having 410+Terry+Ave+North as the address and Seattle as the city.
+
+&pretty=1 will make the json file much more readiable by adding white spaces.
+
+json? will make the output a json string..
 
 ## overpass query API Example call:
 ``` http://overpass-api.de/api/interpreter?data=[out:json];(node[%22amenity%22=%22fuel%22](around:8046.72,39.738453,-104.984853););out;%3E; ``` 
