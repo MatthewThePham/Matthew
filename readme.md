@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/npm.svg)](https://badge.fury.io/js/npm)
 [![region](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)](https://img.shields.io/badge/Region-US%2C%20UK%2C%20CA-green.svg)
 
-[![storePhoto](https://gitlab.com/MatthewPh/ProjectNearMe/raw/master/alexaStore.png)]
+![storePhoto](https://gitlab.com/MatthewPh/ProjectNearMe/raw/master/alexaStore.png)
 
 ## About project 
 Our team of 3 engineers decided on creating a skill which can help people who 
